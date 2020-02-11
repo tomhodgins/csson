@@ -208,9 +208,7 @@ function parseCSSON(string = '') {
     }
 
     // <css-ident>
-    if (
-      component.tokenType === 'IDENT'
-    ) {
+    if (component.tokenType === 'IDENT') {
       return new CSSIdent(component.value)
     }
 
