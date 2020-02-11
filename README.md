@@ -166,7 +166,7 @@ console.log(
 )
 ```
 
-## Using as a CommonJS module with Node
+### Using as a CommonJS module with Node
 
 ```js
 const CSSON = require('@csson/csson/index.cjs.js')
@@ -219,11 +219,11 @@ $ qjs cli/deno.js path/to/data.csson
 
 > You can run `npm link` if you want to use `cli/node.js` on your system as the command `csson`
 
-## Building an Executable
+### Building an Executable
 
 It's possible to build self-contained executables from the files in this repository in a few different ways.
 
-### Using the QuickJS Compiler
+#### Using the QuickJS Compiler
 
 The first way we can build this into an executable is to use the [QuickJS compiler](https://bellard.org/quickjs/quickjs.html#qjsc-compiler). This will compile [cli/quickjs.js](./cli/quickjs.js) into C bytecode, and then compile that into a small self-contained executable:
 
@@ -237,7 +237,7 @@ For a more optimized output, the QuickJS compiler allows you to exclude unused f
 $ qjsc -o csson-quickjs -fno-eval -fno-string-normalize -fno-regexp -fno-proxy -fno-map -fno-typedarray -fno-promise -fno-bigint cli/quickjs.js
 ```
 
-### Using pkg
+#### Using pkg
 
 The second way to build executables from this repository is to use Node and the [pkg](https://www.npmjs.com/package/pkg) package to compile [cli/node.js](./cli/node.js) into a self-contained executable that can run even without Node installed:
 
@@ -311,7 +311,7 @@ console.log(JSON.stringify(data))
 
 To see some examples of CSSON files, check out the files in the [examples/](./examples/) folder
 
-## Online Demo
+## Online Conversion Tool
 
 Check out the [CSSON to JSON converter](https://tomhodgins.github.io/CSSON/) online
 
