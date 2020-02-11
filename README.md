@@ -185,7 +185,7 @@ console.log(
 
 ### Command-line usage with Node, Deno or QuickJS
 
-#### Expanding a string
+#### Converting a string
 
 To convert a string of CSSON to JSON, supply a string to the CLI script as the first argument:
 
@@ -201,9 +201,9 @@ $ deno cli/deno.js '/* example CSSON */ [1, 2, 3, a, #b, url(c)]'
 $ qjs cli/quickjs.js '/* example CSSON */ [1, 2, 3, a, #b, url(c)]'
 ```
 
-#### Expanding a file
+#### Converting a file
 
-To expand a stylesheet, supply a pathname to the CLI script as the first argument:
+To expand a CSSON file to JSON, supply a pathname to the CLI script as the first argument:
 
 ```bash
 $ node cli/node.js path/to/data.csson
