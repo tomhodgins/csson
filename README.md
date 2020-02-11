@@ -1,24 +1,24 @@
 # CSSON
 
-A JSON superset with additional types from CSS
+A JSON superset with additional types from CSS (and comments!)
 
 ## About 
 
-CSSON is a superset of [JSON](https://www.ecma-international.org/publications/standards/Ecma-404.htm) that is parsed according to [CSS syntax](https://drafts.csswg.org/css-syntax-3/).
+CSSON is a superset of [JSON](https://www.ecma-international.org/publications/standards/Ecma-404.htm) that is parsed according to [CSS syntax](https://drafts.csswg.org/css-syntax-3/). All JSON can be handled as CSSON, though not every CSS style sheet can be parsed as CSSON.
 
-All JSON can be handled as CSSON, though not every CSS style sheet can be parsed as CSSON.
+It aims to be a more flexible and forgiving syntax for humans to work with compared to JSON, and also let developers encode common formats like fragment identifiers and urls.
 
-<!--
-Pros:
+## Comments
 
-- CSSON syntax is more expressive and forgiving than JSON syntax, making it friendlier to use
-- CSSON includes more types than JSON, allowing your environment to handle the pieces of information in a smarter way
-- Includes comments
+Since CSSON is parsed according to CSS syntax, any [CSS comments](https://drafts.csswg.org/css-syntax-3/#comment-diagram) `/* */` will be safely ignored during parsing or conversion to JSON.
 
-Cons:
-
-- less built-in language support compared to JSON or XML
--->
+```css
+/* It's like JSON… */
+{
+  /* but with comments… */
+  "demo": [1, 2, 3] /* that can go anywhere! */
+}
+```
 
 ## CSSON Objects
 
@@ -225,7 +225,7 @@ It's possible to build self-contained executables from the files in this reposit
 
 ### Using the QuickJS Compiler
 
-The first way we can build this into an executable is to use the [QuickJS compiler](https://bellard.org/quickjs/quickjs.html#qjsc-compiler). This will compile [cli/quickjs.js] into C bytecode, and then compile that into a small self-contained executable:
+The first way we can build this into an executable is to use the [QuickJS compiler](https://bellard.org/quickjs/quickjs.html#qjsc-compiler). This will compile [cli/quickjs.js](./cli/quickjs.js) into C bytecode, and then compile that into a small self-contained executable:
 
 ```bash
 $ qjsc -o csson-quickjs cli/quickjs.js
@@ -239,13 +239,13 @@ $ qjsc -o csson-quickjs -fno-eval -fno-string-normalize -fno-regexp -fno-proxy -
 
 ### Using pkg
 
-The second way to build executables from this repository is to use Node and the [pkg](https://www.npmjs.com/package/pkg) package to compile [cli/node.js] into a self-contained executable that can run even without Node installed:
+The second way to build executables from this repository is to use Node and the [pkg](https://www.npmjs.com/package/pkg) package to compile [cli/node.js](./cli/node.js) into a self-contained executable that can run even without Node installed:
 
 ```bash
 npx pkg --output csson-node cli/node.js
 ```
 
-> You may need to add a `--targets` argument, e.g. `--targets node12`, to build this with pkg if there are no build targets available for the latest node version
+> You may need to supply a `--targets` argument, e.g. `--targets node12`, to build this with pkg if there are no build targets available for the latest node version
 
 ## Options
 
@@ -310,6 +310,10 @@ console.log(JSON.stringify(data))
 ```
 
 To see some examples of CSSON files, check out the files in the [examples/](./examples/) folder
+
+## Online Demo
+
+Check out the [CSSON to JSON converter](https://tomhodgins.github.io/CSSON/) online
 
 ## More Info
 
