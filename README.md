@@ -203,7 +203,7 @@ $ qjs cli/quickjs.js '/* example CSSON */ [1, 2, 3, a, #b, url(c)]'
 
 #### Converting a file
 
-To expand a CSSON file to JSON, supply a pathname to the CLI script as the first argument:
+To convert a CSSON file to JSON, supply a pathname to the CLI script as the first argument:
 
 ```bash
 $ node cli/node.js path/to/data.csson
