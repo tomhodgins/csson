@@ -1,6 +1,11 @@
 import CSSON from '../index.js'
 
+function CSSONEqualsJSON(string) {
+  return JSON.stringify(JSON.parse(string), null, 2) === JSON.stringify(CSSON.parse(string), null, 2)
+}
+
 const tests = [
+  // Function testing
   [
     CSSON.parse() === undefined,
     'No input should return undefined'
@@ -9,6 +14,8 @@ const tests = [
     CSSON.parse('') === undefined,
     'Empty input with no CSSON should return undefined'
   ],
+
+  // CSSON Features
   [
     JSON.stringify(
       CSSON.parse('/* css */ /* comments */ 1 /* ignored */')
@@ -71,7 +78,7 @@ const tests = [
     'a {b: c; d: e;} is a <css-qualified-rule> type with 2 properties'
   ],
   [
-    CSSON.parse('[[[3]]]').value[0].value[0].value[0].value === 3,
+    CSSON.parse('[[[3]]]').value[0][0][0] === 3,
     '[[[3]]] is a deeply-nested <json-number> 3 inside 3 <json-array>'
   ],
   [
@@ -118,6 +125,16 @@ const tests = [
     CSSON.stringify(CSSON.parse('a{b:c;d:e}')) === 'a{b:c;d:e}',
     `a{b:c;d:e} stringifies to 'a{b:c;d:e}'`
   ],
+
+  // Testing JSON
+  [
+    JSON.stringify(JSON.parse(`[{"a": "a()"}]`)) === JSON.stringify(CSSON.parse(`[{"a": "a()"}]`)),
+    'JSON array parses as CSSON'
+  ],
+  [
+    JSON.stringify(JSON.parse(`{"a": {"b": "b()"}}`)) === JSON.stringify(CSSON.parse(`{"a": {"b": "b()"}}`)),
+    'JSON object parses as CSSON'
+  ]
 ]
 
 // Run tests

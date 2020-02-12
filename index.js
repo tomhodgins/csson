@@ -255,10 +255,16 @@ function parseCSSON(string = '') {
         return new JSONArray(
           component.value.reduce(
             (list, token) => {
-              const object = parseCSSON(token.toSource())
+              let json
+
+              try {
+                json = JSON.parse(
+                  token.toSource()
+                )
+              } catch (error) {}
   
-              if (object !== undefined) {
-                list.push(object)
+              if (json !== undefined) {
+                list.push(json)
               }
   
               return list
@@ -314,7 +320,7 @@ function parseCSSON(string = '') {
             ).join(';')
           ).reduce(
             (obj, prop) => {
-              obj[prop.name] = parseCSSON(
+              obj[prop.name] = JSON.parse(
                 stringifyTokens(prop.value)
               )
 
