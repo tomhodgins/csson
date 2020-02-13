@@ -1,6 +1,6 @@
 {
   "name": "@csson/csson",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A JSON superset with additional types from CSS",
   "main": "index.js",
   "bin": {
