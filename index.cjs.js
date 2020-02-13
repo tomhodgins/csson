@@ -337,12 +337,10 @@ function parseCSSON(string = '') {
           parseCSS.parseAListOfDeclarations(
             parseCSS.parseACommaSeparatedListOfComponentValues(
               stringifyTokens(component.value)
-            ).map(prop => prop.map(tok => tok.toSource()).join('')).join(';')
+            ).map(prop => stringifyTokens(prop)).join(';')
           ).reduce(
             (obj, prop) => {
-              obj[prop.name] = parseCSSON(
-                prop.value.map(tok => tok.toSource()).join('')
-              )
+              obj[prop.name] = parseCSSON(stringifyTokens(prop.value))
 
               return obj
             },
@@ -355,14 +353,12 @@ function parseCSSON(string = '') {
   } else if (rule !== undefined) {
     // <css-qualified-rule>
     return new CSSQualifiedRule(
-      rule.prelude.map(tok => tok.toSource()).join('').trim(),
+      stringifyTokens(rule.prelude).trim(),
       parseCSS.parseAListOfDeclarations(
         rule.value.value
       ).reduce(
         (obj, prop) => {
-          obj[prop.name] = parseCSSON(
-            prop.value.map(tok => tok.toSource()).join('')
-          )
+          obj[prop.name] = parseCSSON(stringifyTokens(prop.value))
 
           return obj
         },
