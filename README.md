@@ -8,7 +8,7 @@ CSSON is a superset of [JSON](https://www.ecma-international.org/publications/st
 
 It aims to be a more flexible and forgiving syntax for humans to work with compared to JSON, and also let developers encode common formats like fragment identifiers and urls.
 
-> * a superset of JSON as far as tested - CSS character escapes and JSON string escapes may overlap in a mutually exclusive way in the current implementation — if you know how to verif this, test this, or support this, please open an issue and report any bugs you find!
+> \* a superset of JSON as far as tested - CSS character escapes and JSON string escapes may overlap in a mutually exclusive way in the current implementation — if you know how to verify this, test this, or support this, please open an issue and report any bugs you find!
 
 ## Comments
 
