@@ -1,4 +1,4 @@
-import CSSON from '../index.js'
+import csson from '../index.js'
 
 const file = Deno.args.slice(1)[0]
 let data
@@ -12,7 +12,7 @@ try {
 // CSSON -> JSON
 console.log(
   JSON.stringify(
-    CSSON.parse(data),
+    csson(data),
     null,
     2
   )

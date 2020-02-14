@@ -4,9 +4,11 @@ A JSON superset with additional types from CSS (and comments!)
 
 ## About 
 
-CSSON is a superset of [JSON](https://www.ecma-international.org/publications/standards/Ecma-404.htm) that is parsed according to [CSS syntax](https://drafts.csswg.org/css-syntax-3/). All JSON can be handled as CSSON, though not every CSS style sheet can be parsed as CSSON.
+CSSON is a superset of [JSON](https://www.ecma-international.org/publications/standards/Ecma-404.htm)* that is parsed according to [CSS syntax](https://drafts.csswg.org/css-syntax-3/). All JSON can be handled as CSSON, though not every CSS style sheet can be parsed as CSSON.
 
 It aims to be a more flexible and forgiving syntax for humans to work with compared to JSON, and also let developers encode common formats like fragment identifiers and urls.
+
+> * a superset of JSON as far as tested - CSS character escapes and JSON string escapes may overlap in a mutually exclusive way in the current implementation — if you know how to verif this, test this, or support this, please open an issue and report any bugs you find!
 
 ## Comments
 
@@ -152,17 +154,17 @@ $ npx @csson/csson path/to/data.csson
 ### Using as an ES module with Deno, QuickJS, or a browser
 
 ```js
-import CSSON from 'https://unpkg.com/@csson/csson'
+import csson from 'https://unpkg.com/@csson/csson'
 
 console.log(
-  CSSON.parse(`
+  csson`
     /* CSSON Demo */
     {
       one: one,
       two: #two,
       three: url(three)
     }
-  `)
+  `
 )
 ```
 
@@ -172,14 +174,14 @@ console.log(
 const CSSON = require('@csson/csson/index.cjs.js')
 
 console.log(
-  CSSON.parse(`
+  csson`
     /* CSSON Demo */
     {
       one: one,
       two: #two,
       three: url(three)
     }
-  `)
+  `
 )
 ```
 
@@ -249,62 +251,44 @@ npx pkg --output csson-node cli/node.js
 
 ## Options
 
-### CSSON.parse() and CSSON.decode()
-
-Both `parse()` and `decode()` are aliases of the same parsing function and can be used interchangeably the same way:
+The default function this package exports can be used with a string, or as a tagged template function, this means you can use it like this:
 
 ```js
-CSSON.parse(string)
-CSSON.decode(string)
+csson('/* demo */a {}')
 ```
-
-- `string` is a string containing a CSSON object
-
-### CSSON.stringify() or CSSON.encode()
-
-Both `stringify()` and `encode()` are aliases of the same stringification function and can be used interchangeably the same way:
 
 ```js
-CSSON.stringify(csson)
-CSSON.encode(csson)
+csson`{time: ${new Date().toString()}}`
 ```
-
-- `csson` is a CSSON object to convert to a string
 
 ## Examples
 
 ### Parsing CSSON from a string
 
 ```js
-import CSSON from 'https://unpkg.com/@csson/csson'
-
-let data = `[one, #two, url(three)]`
+import csson from 'https://unpkg.com/@csson/csson'
 
 // Either of these work
-console.log(CSSON.parse(data))
-console.log(CSSON.decode(data))
+console.log(csson`[one, #two, url(three)]`)
+console.log(csson(`[one, #two, url(three)]`))
 ```
 
 ### Converting CSSON to a string
 
 ```js
-import CSSON from 'https://unpkg.com/@csson/csson'
+import csson from 'https://unpkg.com/@csson/csson'
 
-let data = CSSON.parse(`[one, #two, url(three)]`)
+const data = csson`[one, #two, url(three)]`
 
-// Any of these work
 console.log(String(data))
-console.log(data.toString())
-console.log(CSSON.stringify(data))
-console.log(CSSON.encode(data))
 ```
 
 ### Converting CSSON to JSON
 
 ```js
-import CSSON from 'https://unpkg.com/@csson/csson'
+import csson from 'https://unpkg.com/@csson/csson'
 
-let data = CSSON.parse(`[one, #two, url(three)]`)
+const data = csson`[one, #two, url(three)]`
 
 console.log(JSON.stringify(data))
 ```

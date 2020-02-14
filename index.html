@@ -148,14 +148,14 @@
 <script src=https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ace.js></script>
 <script src=https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.3/ext-beautify.js></script>
 <script type=module>
-  import CSSON from './index.js'
+  import csson from './index.js'
 
   function render(event) {
     localStorage[pluginName] = input.getSession().getValue()
 
     output.getSession().setValue(
       JSON.stringify(
-        CSSON.parse(input.getValue()),
+        csson(input.getValue()),
         null,
         2
       )

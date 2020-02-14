@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs')
-const CSSON = require('../index.cjs.js')
+const csson = require('../index.cjs.js')
 
 const file = process.argv.slice(2)[0]
 let data
@@ -14,7 +14,7 @@ try {
 // CSSON -> JSON
 console.log(
   JSON.stringify(
-    CSSON.parse(data),
+    csson(data),
     null,
     2
   )

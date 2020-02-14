@@ -1,5 +1,5 @@
 import {open} from 'std'
-import CSSON from '../index.js'
+import csson from '../index.js'
 
 const file = scriptArgs[1]
 let data
@@ -13,7 +13,7 @@ try {
 // CSSON -> JSON
 console.log(
   JSON.stringify(
-    CSSON.parse(data),
+    csson(data),
     null,
     2
   )

@@ -1,5 +1,9 @@
 import * as parseCSS from './lib/parse-css/index.js'
 
+function stringify(tokens = []) {
+  return tokens.map(token => token.toSource()).join('')
+}
+
 class CSSONType {
   constructor() {
     if (this.constructor === CSSONType) {
@@ -7,10 +11,21 @@ class CSSONType {
     }
   }
   toJSON() { return this.value }
-  toString() { return this.value }
+  toString() { return String(this.value) }
 }
 
-class JSONNumber extends CSSONType {
+class JSONType extends CSSONType {
+  constructor() {
+    super()
+
+    if (this.constructor === JSONType) {
+      throw new Error(`Can't create abstract base class directly`)
+    }
+  }
+  toString() { return JSON.stringify(this.value) }
+}
+
+class JSONNumber extends JSONType {
   constructor(value) {
     super()
 
@@ -19,7 +34,7 @@ class JSONNumber extends CSSONType {
   }
 }
 
-class JSONTrue extends CSSONType {
+class JSONTrue extends JSONType {
   constructor() {
     super()
 
@@ -28,7 +43,7 @@ class JSONTrue extends CSSONType {
   }
 }
 
-class JSONFalse extends CSSONType {
+class JSONFalse extends JSONType {
   constructor() {
     super()
 
@@ -37,25 +52,23 @@ class JSONFalse extends CSSONType {
   }
 }
 
-class JSONNull extends CSSONType {
+class JSONNull extends JSONType {
   constructor() {
     super()
 
     this.type = '<json-null>'
     this.value = null
   }
-  toJSON() { return null }
 }
 
-class JSONString extends CSSONType {
+class JSONString extends JSONType {
   constructor(value) {
     super()
 
     this.type = '<json-string>'
-    this.value = String(value)
+    this.value = value
   }
-  //toJSON() { return this.value }
-  toString() { return JSON.stringify(this.value) }
+  toJSON() { return JSON.stringify(this.value) }
 }
 
 class CSSIdent extends CSSONType {
@@ -88,14 +101,13 @@ class CSSUrl extends CSSONType {
   toString() { return `url(${this.value})` }
 }
 
-class JSONArray extends CSSONType {
+class JSONArray extends JSONType {
   constructor(value) {
     super()
 
     this.type = '<json-array>'
     this.value = value
   }
-  toString() { return JSON.stringify(this.value) }
 }
 
 class CSSONArray extends JSONArray {
@@ -105,17 +117,17 @@ class CSSONArray extends JSONArray {
     this.type = '<csson-array>'
     this.value = value
   }
+  toJSON() { return this.value }
   toString() { return `[${this.value}]` }
 }
 
-class JSONObject extends CSSONType {
+class JSONObject extends JSONType {
   constructor(value) {
     super()
 
     this.type = '<json-object>'
     this.value = value
   }
-  toString() { return JSON.stringify(this.value) }
 }
 
 class CSSONObject extends JSONObject {
@@ -142,11 +154,7 @@ class CSSQualifiedRule extends CSSONType {
     this.name = name
     this.value = properties
   }
-  toJSON() {
-    return JSON.parse(
-      `{${JSON.stringify(this.name)}:${JSON.stringify(this.value)}}`
-    )
-  }
+  toJSON() { return JSON.parse(`{${JSON.stringify(this.name)}:${JSON.stringify(this.value)}}`) }
   toString() {
     return `${this.name}{${
       Object.entries(this.value)
@@ -156,19 +164,35 @@ class CSSQualifiedRule extends CSSONType {
   }
 }
 
-function parseCSSON(string = '') {
+export default function parse(input = '', ...expressions) {
+  // Support as tagged template function
+  if (Array.isArray(input)) {
+    input = input.reduce(
+      (accumulator, string, index) => {
+        accumulator += string
+
+        if (expressions[index]) {
+          accumulator += expressions[index]
+        }
+
+        return accumulator
+      },
+      ''
+    )
+  }
+
   // Try To Parse A Rule
   let rule
 
   try {
-    rule = parseCSS.parseARule(String(string))
+    rule = parseCSS.parseARule(String(input))
   } catch (error) {}
 
   // Try To Parse A Component Value
   let component
 
   try {
-    component = parseCSS.parseAComponentValue(String(string))
+    component = parseCSS.parseAComponentValue(String(input))
   } catch (error) {}
 
   if (
@@ -226,8 +250,8 @@ function parseCSSON(string = '') {
       && component.name === 'url'
     ) {
       return new CSSUrl(
-        parseCSSON(
-          stringifyTokens(component.value)
+        parse(
+          stringify(component.value)
         ).value
       )
     }
@@ -242,11 +266,12 @@ function parseCSSON(string = '') {
       component.type === 'BLOCK'
       && component.name === '['
     ) {
+      // Try parsing JSON array
       let json
 
       try {
         json = JSON.parse(
-          `[${stringifyTokens(component.value)}]`
+          `[${stringify(component.value)}]`
         )
       } catch (error) {}
 
@@ -279,7 +304,7 @@ function parseCSSON(string = '') {
         return new CSSONArray(
           component.value.reduce(
             (list, token) => {
-              const object = parseCSSON(token.toSource())
+              const object = parse(token.toSource())
 
               if (object !== undefined) {
                 list.push(object)
@@ -293,25 +318,26 @@ function parseCSSON(string = '') {
       }
     }
 
-    // <json-object>
+    // <json-object> & <csson-object>
     if (
       component.type === 'BLOCK'
       && component.name === '{'
     ) {
+      // Try parsing a JSON object
       let json
 
       try {
         json = JSON.parse(
-          `{${stringifyTokens(component.value)}}`
+          `{${stringify(component.value)}}`
         )
       } catch (error) {}
 
       // <json-object>
-      if (json !== undefined) {
+      if (json) {
         return new JSONObject(
           parseCSS.parseAListOfDeclarations(
             parseCSS.parseACommaSeparatedListOfComponentValues(
-              stringifyTokens(component.value)
+              stringify(component.value)
             ).map(property => property.map(token =>
               token.tokenType === 'STRING'
                 ? token.value
@@ -321,7 +347,7 @@ function parseCSSON(string = '') {
           ).reduce(
             (obj, prop) => {
               obj[prop.name] = JSON.parse(
-                stringifyTokens(prop.value)
+                stringify(prop.value)
               )
 
               return obj
@@ -336,11 +362,11 @@ function parseCSSON(string = '') {
         return new CSSONObject(
           parseCSS.parseAListOfDeclarations(
             parseCSS.parseACommaSeparatedListOfComponentValues(
-              stringifyTokens(component.value)
-            ).map(prop => stringifyTokens(prop)).join(';')
+              stringify(component.value)
+            ).map(prop => stringify(prop)).join(';')
           ).reduce(
             (obj, prop) => {
-              obj[prop.name] = parseCSSON(stringifyTokens(prop.value))
+              obj[prop.name] = parse(stringify(prop.value))
 
               return obj
             },
@@ -353,12 +379,10 @@ function parseCSSON(string = '') {
   } else if (rule !== undefined) {
     // <css-qualified-rule>
     return new CSSQualifiedRule(
-      stringifyTokens(rule.prelude).trim(),
-      parseCSS.parseAListOfDeclarations(
-        rule.value.value
-      ).reduce(
+      stringify(rule.prelude).trim(),
+      parseCSS.parseAListOfDeclarations(rule.value.value).reduce(
         (obj, prop) => {
-          obj[prop.name] = parseCSSON(stringifyTokens(prop.value))
+          obj[prop.name] = parse(stringify(prop.value))
 
           return obj
         },
@@ -366,19 +390,4 @@ function parseCSSON(string = '') {
       )
     )
   }
-}
-
-function stringifyCSSON(csson = '') {
-  return String(csson.toString())
-}
-
-function stringifyTokens(tokens = []) {
-  return tokens.map(token => token.toSource()).join('')
-}
-
-export default {
-  parse: parseCSSON,
-  decode: parseCSSON,
-  stringify: stringifyCSSON,
-  encode: stringifyCSSON
 }
