@@ -68,7 +68,6 @@ class JSONString extends JSONType {
     this.type = '<json-string>'
     this.value = value
   }
-  toJSON() { return JSON.stringify(this.value) }
 }
 
 class CSSIdent extends CSSONType {

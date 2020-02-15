@@ -1,4 +1,4 @@
-const csson = require('../index.cjs.js')
+const csson = require('../index.cjs')
 
 const tests = [
   // Function testing
@@ -16,6 +16,11 @@ const tests = [
     csson(''),
     undefined,
     'Empty input as function call returns undefined'
+  ],
+  [
+    csson`<xml>oops</xml>`,
+    undefined,
+    'bad input returns undefined'
   ],
   [
     csson`${1+1}`.toString(),
@@ -51,6 +56,11 @@ const tests = [
     'number',
     'csson`1`.toJSON() is a number'
   ],
+  [
+    JSON.stringify(csson`1`),
+    "1",
+    'JSON.stringify(csson`1`) is "1"'
+  ],
 
   // <json-true>
   [
@@ -77,6 +87,11 @@ const tests = [
     csson`true`.toJSON(),
     true,
     'csson`true`.toJSON() is a true'
+  ],
+  [
+    JSON.stringify(csson`true`),
+    "true",
+    'JSON.stringify(csson`true`) is "true"'
   ],
 
   // <json-false>
@@ -105,6 +120,11 @@ const tests = [
     false,
     'csson`false`.toJSON() is a false'
   ],
+  [
+    JSON.stringify(csson`false`),
+    "false",
+    'JSON.stringify(csson`false`) is "false"'
+  ],
 
   // <json-null>
   [
@@ -132,6 +152,11 @@ const tests = [
     null,
     'csson`null`.toJSON() is a null'
   ],
+  [
+    JSON.stringify(csson`null`),
+    'null',
+    'JSON.stringify(csson`null`) is "null"'
+  ],
 
   // <json-string>
   [
@@ -152,12 +177,17 @@ const tests = [
   [
     csson`"hello"`.toString(),
     '"hello"',
-    'csson`"hello"`.toString() is a "hello"'
+    'csson`"hello"`.toString() is "hello"'
   ],
   [
     csson`"hello"`.toJSON(),
+    'hello',
+    'csson`"hello"`.toJSON() is a string hello'
+  ],
+  [
+    JSON.stringify(csson`"hello"`),
     '"hello"',
-    'csson`"hello"`.toJSON() is a string "hello"'
+    'JSON.stringify(csson`"hello"`) is a string "hello"'
   ],
 
   // <css-ident>
@@ -186,6 +216,11 @@ const tests = [
     "hello",
     'csson`hello`.toJSON() is a string "hello"'
   ],
+  [
+    JSON.stringify(csson`hello`),
+    '"hello"',
+    'JSON.stringify(csson`hello`) is a string "hello"'
+  ],
 
   // <css-hash>
   [
@@ -212,6 +247,11 @@ const tests = [
     csson`#hash`.toJSON(),
     "#hash",
     'csson`#hash`.toJSON() is a string "#hash"'
+  ],
+  [
+    JSON.stringify(csson`#hash`),
+    '"#hash"',
+    'JSON.stringify(csson`#hash`) is a string "#hash"'
   ],
 
   // <css-url>
@@ -290,6 +330,21 @@ const tests = [
     "double",
     'csson`url("double")`.toJSON() is a string "double"'
   ],
+  [
+    JSON.stringify(csson`url(unquoted)`),
+    '"unquoted"',
+    'JSON.stringify(csson`url(unquoted)`) is a string "unquoted"'
+  ],
+  [
+    JSON.stringify(csson`url('single')`),
+    '"single"',
+    `JSON.stringify(csson\`url('single')\`) is a string "single"`
+  ],
+  [
+    JSON.stringify(csson`url("double")`),
+    '"double"',
+    'JSON.stringify(csson`url("double")`) is a string "double"'
+  ],
 
   // <json-array>
   [
@@ -317,6 +372,11 @@ const tests = [
     true,
     'csson`[1, 2, 3]`.toJSON() is an array'
   ],
+  [
+    JSON.stringify(csson`[1, 2, 3]`),
+    '[1,2,3]',
+    'JSON.stringify(csson`[1, 2, 3]`) is an "[1,2,3]"'
+  ],
 
   // <csson-array>
   [
@@ -340,9 +400,14 @@ const tests = [
     'csson`[one, #two, url(three)]`.toString() is "[one,#two,url(three)]"'
   ],
   [
-    Array.isArray(csson`[1, 2, 3]`.toJSON()),
+    Array.isArray(csson`[one, #two, url(three)]`.toJSON()),
     true,
-    'csson`[1, 2, 3]`.toJSON() is an array'
+    'csson`[one, #two, url(three)]`.toJSON() is an array'
+  ],
+  [
+    JSON.stringify(csson`[one, #two, url(three)]`),
+    '["one","#two","three"]',
+    `JSON.stringify(csson\`[one, #two, url(three)]\`) is '["one","#two","three"]'`
   ],
 
   // <json-object>
@@ -371,6 +436,11 @@ const tests = [
     'object',
     'csson`{"one":1,"two":2}`.toJSON() is an object'
   ],
+  [
+    JSON.stringify(csson`{"one": 1,"two":2}`),
+    '{"one":1,"two":2}',
+    `JSON.stringify(csson\`{"one":1,"two":2}\`) is '{"one":1,"two":2}'`
+  ],
 
   // <csson-object>
   [
@@ -398,6 +468,11 @@ const tests = [
     'object',
     'csson`{one: 1, two: 2}`.toJSON() is an object'
   ],
+  [
+    JSON.stringify(csson`{one: 1, two: 2}`),
+    '{"one":1,"two":2}',
+    `JSON.stringify(csson\`{one: 1, two: 2}\`) is '{"one":1,"two":2}'`
+  ],
 
   // <css-qualified-rule>
   [
@@ -423,7 +498,12 @@ const tests = [
   [
     JSON.stringify(csson`a { b: c; }`.toJSON()),
     '{"a":{"b":"c"}}',
-    'csson`a { b: c; }`.toJSON() is a string "{"a":{"b":"c"}}"'
+    'csson`a { b: c; }`.toJSON() is {a: {b: "c"}}'
+  ],
+  [
+    JSON.stringify(csson`a { b: c; }`),
+    '{"a":{"b":"c"}}',
+    'JSON.stringify(csson`a { b: c; }`.toJSON()) is "{"a":{"b":"c"}}"'
   ],
 
   // CSSON Features
@@ -498,7 +578,7 @@ const passed = tests.filter(([a, b]) => a === b)
 const failed = tests.filter(([a, b]) => a !== b)
 
 console.log(`\nSuccessful: ${passed.length}/${tests.length}\n`)
-passed.forEach(([a, b, message]) => console.log(a === b, message))
+//passed.forEach(([a, b, message]) => console.log(a === b, message))
 
 if (failed.length) {
   console.log(`\nFailed: ${failed.length}/${tests.length}\n`)

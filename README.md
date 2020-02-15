@@ -137,7 +137,7 @@ selector {
 This package is available on [npm](http://npmjs.com/package/@csson/csson) and is delivered in two formats:
 
 - [index.js](./index.js) is an ES module for use with [Deno](https://deno.land/), [QuickJS](https://bellard.org/quickjs), browsers, and ES module bundlers
-- [index.cjs.js](./index.cjs.js) is a CommonJS module for use with [Node](https://nodejs.org/en/) and CommonJS bundlers
+- [index.cjs](./index.cjs) is a CommonJS module for use with [Node](https://nodejs.org/en/) and CommonJS bundlers
 
 Below are some of the ways you can consume and use this package.
 
@@ -171,7 +171,7 @@ console.log(
 ### Using as a CommonJS module with Node
 
 ```js
-const CSSON = require('@csson/csson/index.cjs.js')
+const CSSON = require('@csson/csson/index.cjs')
 
 console.log(
   csson`

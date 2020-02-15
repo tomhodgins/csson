@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const fs = require('fs')
-const csson = require('../index.cjs.js')
+const csson = require('../index.cjs')
 
 const file = process.argv.slice(2)[0]
 let data
