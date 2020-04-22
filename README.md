@@ -297,7 +297,7 @@ To see some examples of CSSON files, check out the files in the [examples/](./ex
 
 ## Online Conversion Tool
 
-Check out the [CSSON to JSON converter](https://tomhodgins.github.io/CSSON/) online
+Check out the [CSSON to JSON converter](https://tomhodgins.github.io/csson/) online
 
 ## More Info
 
